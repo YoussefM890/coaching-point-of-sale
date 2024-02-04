@@ -1,0 +1,13 @@
+.table-container {
+  width: 100%; /* Adjust if necessary for your layout */
+  overflow-x: auto;
+}
+
+.scrollable-table {
+  width: 100%; /* This makes the table stretch to the width of the container */
+  min-width: 600px; /* Adjust the minimum width as needed */
+}
+.multiline {
+  white-space: pre-wrap;
+  overflow: hidden;
+}

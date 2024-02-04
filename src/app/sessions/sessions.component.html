@@ -1,0 +1,52 @@
+<form
+  [formGroup]="filterForm"
+  #employeeListForm="ngForm"
+  class="filter-border m-1"
+  [ngStyle]="{
+    'border-color': filter.isEmpty() ? 'grey' : 'green'
+  }">
+  <mat-form-field class="m-1">
+    <input
+      type="text"
+      formControlName="name_substr"
+      matInput
+      placeholder="{{ 'Employee Name' | translate }}"
+    />
+  </mat-form-field>
+</form>
+
+<div class="m-1 separator">
+    <div class="left-group"></div>
+  <div class="right-group">
+    @if (openSessionExists()){
+      <button mat-flat-button color="primary" (click)="openStartSession()" class="m-1">
+        <mat-icon>play_arrow</mat-icon>
+        {{ 'Continue Session' | translate }}
+      </button>
+    } @else {
+    <button mat-flat-button color="primary" (click)="openStartSession()" class="m-1">
+      <mat-icon>play_arrow</mat-icon>
+      {{ 'Start Session' | translate }}
+    </button>
+    }
+  </div>
+</div>
+@if (datasource && datasource.length){
+<app-our-table [dataSource]="datasource" [columns]="columns"></app-our-table>
+  <mat-paginator
+    [length]="length"
+    [pageSize]="filter.page_size"
+    [pageSizeOptions]="pageSizeOptions"
+    (page)="frontFilter($event)"
+  >
+  </mat-paginator>
+}
+<div [hidden]="datasource !== undefined">
+  <mat-spinner></mat-spinner>
+  <h4>{{ 'Please wait a bit...' | translate }}</h4>
+</div>
+@if (datasource && datasource.length === 0 ){
+  <div  class="centered">
+    <h3>{{ 'No sessions available' | translate }}</h3>
+  </div>
+}

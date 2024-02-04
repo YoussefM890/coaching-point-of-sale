@@ -1,0 +1,158 @@
+/* list.component.css */
+.exit-button {
+  height:100%;
+  float: right;
+  border-radius: 0;
+  font-weight: bold;
+}
+mat-list-item {
+  border-bottom: 1px solid #cfd8dc;
+  padding: 10px 0;
+}
+mat-list-item:hover {
+  background: #eceff1;
+}
+.price-container{
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-direction: column;
+}
+
+.total {
+  font-weight: bold;
+}
+
+/* You might need to adjust your padding and margins based on your layout */
+.tile-flex-container {
+  width: 100%;
+  height: 100%;
+  padding: 5px 0 0 5px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px; /* Adjust the space between cards */
+  align-content: flex-start; /* Aligns content at the top */
+  align-items: flex-start; /* Aligns items at the top */
+}
+.container {
+  display: flex;
+  padding: 0;
+}
+.container-full {
+  width: 100%;
+  height: 100%;
+}
+.example-card {
+  flex: 0 1 auto; /* Grow and shrink as needed, base width is auto */
+  width: calc(14.285% - 5px); /* Adjust the width for 2 cards per row, subtract the gap */
+  /* You can use media queries to adjust the width for different screen sizes */
+}
+//.category-button {
+//  height: 100%;
+//  border-radius: 5px;
+//}
+.category-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Vertical alignment */
+  justify-content: center; /* Horizontal alignment */
+  padding: 10px; /* Adjust the padding inside the button */
+  border: none; /* Remove the border */
+  height: 100%; /* Set the height to 100% */
+  background-color: transparent;
+  &:last-child {
+    border-radius:  0 5px 5px 0;
+  }
+  &:hover {
+    background : #dee4e7 !important;
+  }
+  //cursor: pointer; /* Change mouse cursor on hover */
+}
+
+.icon {
+  width: 24px; /* Set the width of the icon */
+  height: 24px; /* Set the height of the icon */
+}
+.search-field {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  border : 1px solid #dee4e7;
+  background-color: transparent;
+  border-radius: 5px;
+  height: 50%;
+  width: 90%;
+}
+.search-input{
+  outline: none;
+  border : none;
+  background-color: transparent;
+}
+
+.payment-button{
+  width: 100%;
+  height: 100%;
+  border: none;
+  outline: none;
+  font-weight: bold;
+}
+
+.gray-button {
+  background-color: #ffffff !important;
+  &:hover {
+    background-color: #cfd8dc !important;
+  }
+}
+.pink-button {
+  color: #fff !important;
+
+  &:hover {
+    background-color: #880e4f !important;
+  }
+}
+.dark-gray-button {
+  color: #fff !important;
+  background-color: #607d8b !important;
+  &:hover {
+    background-color: #546e7a !important;
+  }
+}
+
+.product-grid {
+  padding: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px; /* Adjust the space between cards */
+  justify-content: flex-start; /* Center align the cards */
+  height: 100%; /* Set the height to 100% */
+  overflow-y: auto; /* Enables vertical scrolling */
+}
+
+.product-card {
+  flex: 1 1 17%; /* Flex grow, shrink and basis */
+  max-width: 20%; /* Maximum width of each card */
+  height: 200px; /* Set the height to 100% */
+  /* Add more styling as needed */
+}
+
+.product-card img {
+  width: 100px;
+  height: 100px;
+}
+small {
+  font-size: 0.9rem;
+}
+.selected-order-line {
+  background-color: #cbffbd;
+  &:hover {
+    background-color: #cbffbd;
+  }
+}
+.selected-category {
+  background-color: #546e7a;
+  color: #fff;
+  &:hover {
+    background-color: #546e7a !important;
+    color: #fff !important;
+  }
+}

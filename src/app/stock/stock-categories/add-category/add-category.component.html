@@ -1,0 +1,77 @@
+<div>
+  <div>
+    <mat-toolbar class="separator" color="primary">
+      <span>{{ 'Add Category' | translate }}</span>
+      <button mat-button mat-dialog-close>&times;</button>
+    </mat-toolbar>
+  </div>
+  <div class="p-3">
+    @if (this.form) {
+      <form
+        [formGroup]="form"
+        #RegistrationForm="ngForm"
+        novalidate
+        (ngSubmit)="addCategory()"
+      >
+        <div>
+          <div class="row">
+            <mat-form-field class="col-6">
+              <mat-label>{{ 'Name' | translate }}</mat-label>
+              <input
+                type="text"
+                formControlName="name"
+                placeholder="{{'Name' | translate}}"
+                matInput
+                required
+              />
+              @if (formErrors.name) {
+                <mat-error>
+                  {{ formErrors.name }}
+                </mat-error>
+              }
+            </mat-form-field>
+
+            <mat-form-field class="col-6">
+              <mat-label>{{ 'Description' | translate }}</mat-label>
+              <input
+                type="text"
+                formControlName="description"
+                placeholder="{{'Description' | translate}}"
+                matInput
+                required
+              />
+              @if (formErrors.description) {
+                <mat-error>
+                  {{ formErrors.description }}
+                </mat-error>
+              }
+            </mat-form-field>
+
+            <div class="icon-selector-grid">
+              @for (icon of availableIcons ;track icon) {
+                <div [class]="'icon-option'">
+                  <button type="button" (click)="selectIcon(icon)">
+                    <mat-icon>{{ icon }}</mat-icon>
+                  </button>
+                </div>
+              }
+            </div>
+
+          </div>
+        </div>
+        <div>
+          <button
+            type="submit"
+            class="right"
+            color="primary"
+            mat-flat-button
+            [disabled]="form.invalid"
+          >
+            <mat-icon matTooltip="{{'Add Employee' | translate}}">{{iconControl.value}}</mat-icon>
+            {{ 'Add Category' | translate }}
+          </button>
+        </div>
+      </form>
+    }
+  </div>
+</div>

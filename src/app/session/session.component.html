@@ -1,0 +1,173 @@
+<div [style.height]="'7.2vh'">
+  <button mat-raised-button color="accent" class="exit-button" [matMenuTriggerFor]="exitMenu" >{{'Exit Session' | translate}}</button>
+  <mat-menu #exitMenu="matMenu">
+    <button mat-menu-item (click)="endSession()">End Session</button>
+    <button mat-menu-item (click)="pauseSession()">Pause Session</button>
+  </mat-menu>
+</div>
+<mat-grid-list cols="3" rowHeight="15.2vh">
+  <!--  order lines-->
+  <mat-grid-tile
+    [colspan]="1"
+    [rowspan]="5"
+    [style.background]="'#f6f7f8'">
+    <div class="p-1 vertical-separator w-100 h-100">
+      <mat-list role="list" class="w-100">
+        @for (line of orderLines; track line.id) {
+          <mat-list-item role="listitem" (click)="selectLine(line.id)"
+                         [class.selected-order-line]="selectedLine == line.id">
+            <div class="row">
+              <div class="col">
+                {{ line.product_name }}
+              </div>
+              <div class="col text-end">
+                {{ line.quantity }} Units x
+                @if (line.unit_price_after_discount) {
+                  <span>
+                    <s>{{ line.unit_price | currency }}</s> {{ line.unit_price_after_discount | currency }}
+                  </span>
+                } @else {
+                  <span>{{ line.unit_price | currency }}</span>
+                }
+                / Unit
+              </div>
+              <div class="col text-end">
+                ${{ line.quantity * (line.unit_price_after_discount ?? line.unit_price) | number:'1.2-2' }}
+              </div>
+            </div>
+          </mat-list-item>
+        }
+      </mat-list>
+      <div class="d-flex justify-content-end w-100">
+        <div class="price-container">
+          @if (appliedProgramLines.length > 0) {
+            <div class="total">
+              Total: <s>{{ currentOrder.total | currency }}</s> {{ currentOrder.total_after_discount | currency }}
+            </div>
+          } @else {
+            <div class="total">
+              Total: {{ currentOrder.total | currency }}
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  </mat-grid-tile>
+  <!--  categories-->
+  <mat-grid-tile
+    [colspan]="2"
+    [rowspan]="1"
+    [style.background]="'#f6f7f8'">
+    <div class="separator w-100 h-100">
+      <div class="container left-group h-100">
+        <button
+          class="category-button"
+          (click)="filterProducts(0)"
+          [class.selected-category]="selectedCategory === 0"
+        >
+          <mat-icon class="mb-1">home</mat-icon>
+        </button>
+        @for (category of categories; track category.id) {
+
+          <button class="category-button"
+                  (click)="filterProducts(category.id)"
+                  [class.selected-category]="selectedCategory === category.id">
+            <mat-icon class="mb-1">{{ category.icon }}</mat-icon>
+            <span class="mt-1">{{ category.name }}</span>
+          </button>
+        }
+      </div>
+      <div class="right-group me-1 h-100">
+        <div class="search-field">
+          <span class="material-icons m-1">search</span>
+          <input
+            class="search-input"
+            type="text"
+            placeholder="{{ 'Search products' | translate }}"
+          />
+        </div>
+      </div>
+    </div>
+  </mat-grid-tile>
+  <!--  products-->
+  <mat-grid-tile
+    [colspan]="2"
+    [rowspan]="5"
+    [style.background]="'#dee4e7'">
+    <div class="product-grid">
+      @for (product of products; track product.id) {
+
+        <mat-card class="product-card" (click)="addOrderLine(product)">
+          <mat-card-header class="pt-0">
+            <!--        <div mat-card-avatar class="example-header-image"></div>-->
+            <!--        <img mat-card-image src="https://material.angular.io/assets/img/examples/shiba2.jpg" alt="Photo of a Shiba Inu">-->
+            @if (product.image) {
+              <img mat-card-image [src]="product.image" alt="." class="left-group">
+            } @else {
+              <img mat-card-image src="../../../assets/products/apple.png" alt="." class="left-group">
+            }
+          </mat-card-header>
+          <mat-card-content>
+            <mat-card-title><small>{{ product.name }}</small></mat-card-title>
+            <mat-card-subtitle>
+              @if (product.price_after_discount) {
+                <small>
+                  <s>{{ product.price | currency }}</s> {{ product.price_after_discount | currency }}
+                </small>
+              } @else {
+                <small>{{ product.price | currency }}</small>
+              }
+            </mat-card-subtitle>
+          </mat-card-content>
+          <!--      <mat-card-actions>-->
+          <!--        <button mat-button>LIKE</button>-->
+          <!--        <button mat-button>SHARE</button>-->
+          <!--      </mat-card-actions>-->
+        </mat-card>
+      }
+    </div>
+  </mat-grid-tile>
+  <!--  payment-->
+  <mat-grid-tile
+    [colspan]="1"
+    [rowspan]="1"
+    [style.background]="'#fff'">
+    <div class="vertical-separator w-100 h-100">
+      <!--    <mat-grid-list cols="6" rowHeight="25%" class="h-100 w-100">-->
+      <!--      @for (tile of tiles; track tile) {-->
+      <!--        <mat-grid-tile-->
+      <!--          [colspan]="tile.cols"-->
+      <!--          [rowspan]="tile.rows"-->
+      <!--        >-->
+      <div>
+        <button mat-raised-button color="accent" (click)="pay()" [disabled]="orderLines.length === 0">Pay
+          <mat-icon>payment</mat-icon>
+        </button>
+        <button mat-raised-button color="accent" (click)="subtractQuantity()" [disabled]="selectedLine == null">-
+        </button>
+        <button mat-raised-button color="accent" (click)="addQuantity()" [disabled]="selectedLine == null">+</button>
+        <button mat-raised-button color="primary"
+                [matMenuTriggerFor]="menu">{{ selectedPricelist ? selectedPricelist.name : ("Normal prices" | translate) }}
+        </button>
+        <mat-menu #menu="matMenu">
+          <button mat-menu-item (click)="applyPricelist()">Normal prices</button>
+          @for (pricelist of pricelists; track pricelist.id) {
+            <button mat-menu-item (click)="applyPricelist(pricelist)">{{ pricelist.name }}</button>
+          }
+        </mat-menu>
+      </div>
+      <div>
+        <input
+          type="text"
+          placeholder="{{ 'Discount Code' | translate }}"
+          [(ngModel)]="discountCode"
+        >
+        <button mat-raised-button color="primary" (click)="applyDiscount()">Apply</button>
+        <button mat-raised-button color="warn" (click)="resetDiscount()">Reset</button>
+      </div>
+    </div>
+  </mat-grid-tile>
+</mat-grid-list>
+
+
+

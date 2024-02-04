@@ -1,0 +1,120 @@
+<div>
+  <div>
+    <mat-toolbar class="separator" color="primary">
+      <span>{{ 'Add Product' | translate }}</span>
+      <button mat-button mat-dialog-close>&times;</button>
+    </mat-toolbar>
+  </div>
+  <div class="p-3">
+    @if (this.form) {
+      <form
+        [formGroup]="form"
+        #RegistrationForm="ngForm"
+        novalidate
+        (ngSubmit)="addProduct()"
+      >
+        <div class="row">
+          <mat-form-field class="col-6">
+            <mat-label>{{ 'Product Name' | translate }}</mat-label>
+            <input
+              type="text"
+              formControlName="name"
+              placeholder="{{'Product Name' | translate}}"
+              matInput
+              required
+            />
+            @if (formErrors.name) {
+              <mat-error>
+                {{ formErrors.name }}
+              </mat-error>
+            }
+          </mat-form-field>
+          <mat-form-field class="col-6">
+            <mat-label>{{ 'Category' | translate }}</mat-label>
+            <mat-select formControlName="category">
+              @for (category of categories; track category.id) {
+                <mat-option [value]="category.name">{{ category.name }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+
+        </div>
+        <div class="row">
+          <mat-form-field class="col-12">
+            <mat-label>{{ 'Product Description' | translate }}</mat-label>
+            <input
+              type="text"
+              formControlName="description"
+              placeholder="{{'Product Description' | translate}}"
+              matInput
+              required
+            />
+            @if (formErrors.description) {
+              <mat-error>
+                {{ formErrors.description }}
+              </mat-error>
+            }
+          </mat-form-field>
+        </div>
+        <div class="row">
+          <mat-form-field class="col-6">
+            <mat-label>{{ 'Price' | translate }}</mat-label>
+            <input
+              type="number"
+              formControlName="price"
+              placeholder="{{'Price' | translate}}"
+              matInput
+              required
+            />
+            @if (formErrors.price) {
+              <mat-error>
+                {{ formErrors.price }}
+              </mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field class="col-6">
+            <mat-label>{{ 'Quantity' | translate }}</mat-label>
+            <input
+              type="number"
+              formControlName="quantity"
+              placeholder="{{'Quantity' | translate}}"
+              matInput
+              required
+            />
+            @if (formErrors.quantity) {
+              <mat-error>
+                {{ formErrors.quantity }}
+              </mat-error>
+            }
+          </mat-form-field>
+        </div>
+        <div class="row">
+            <input
+              class="col-6"
+              (change)="onImageSelected($event)"
+              type="file"
+              placeholder="{{'Image' | translate}}"
+              required
+            />
+          <div class="col-6">
+          <button
+            type="submit"
+            mat-flat-button
+            class="right"
+            color="primary"
+            [disabled]="form.invalid"
+          >
+            <mat-icon matTooltip="{{'Add Product' | translate}}">add</mat-icon>
+            {{ 'Add Product' | translate }}
+          </button>
+          </div>
+
+        </div>
+        @if (imageControl.value){
+          <img  [src]="imageControl.value" alt="Uploaded Image" width="100" height="100">
+        }
+      </form>
+    }
+  </div>
+</div>

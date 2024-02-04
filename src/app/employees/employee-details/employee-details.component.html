@@ -1,0 +1,53 @@
+<form
+  [formGroup]="filterForm"
+  #employeeListForm="ngForm"
+  class="filter-border m-1"
+  [ngStyle]="{
+    'border-color': filter.isEmpty() ? 'grey' : 'green'
+  }">
+  <mat-form-field class="m-1">
+    <input
+      type="text"
+      formControlName="name_substr"
+      matInput
+      placeholder="{{ 'Employee Name' | translate }}"
+    />
+  </mat-form-field>
+  <!--  <mat-form-field class="m-1">-->
+  <!--    <input-->
+  <!--      type="text"-->
+  <!--      formControlName="cin_substr"-->
+  <!--      matInput-->
+  <!--      placeholder="{{ 'Employee\'s National Identity Card' | translate }}"-->
+  <!--    />-->
+  <!--  </mat-form-field>-->
+</form>
+<div class="m-1">
+  <button mat-flat-button color="primary" (click)="openAddEmployee()">
+    <mat-icon>person_add</mat-icon>
+    {{ 'Add Employee' | translate }}
+  </button>
+  <button mat-flat-button color="primary" (click)="openImportEmployees()" class="m-1">
+    <mat-icon>import_export</mat-icon>
+    {{ 'Import Employees' | translate }}
+  </button>
+</div>
+@if (datasource && datasource.length > 0) {
+  <app-our-table [dataSource]="datasource" [columns]="columns"></app-our-table>
+  <mat-paginator
+    [length]="length"
+    [pageSize]="filter.page_size"
+    [pageSizeOptions]="pageSizeOptions"
+    (page)="frontFilter($event)"
+  >
+  </mat-paginator>
+}
+<div [hidden]="datasource !== undefined">
+  <mat-spinner></mat-spinner>
+  <h4>{{ 'Please wait a bit...' | translate }}</h4>
+</div>
+@if (datasource && datasource.length === 0 ){
+  <div  class="centered">
+    <h3>{{ 'No employees available' | translate }}</h3>
+  </div>
+}

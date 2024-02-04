@@ -1,0 +1,18 @@
+@use '@angular/material' as mat;
+
+@include mat.core();
+
+$pos-primary: mat.define-palette(mat.$blue-grey-palette, 500, 100, 900);
+$pos-accent: mat.define-palette(mat.$pink-palette, 500, 100, 900);
+$pos-warn: mat.define-palette(mat.$red-palette);
+$pos-danger: mat.define-palette(mat.$red-palette, 500, 100, 900);
+
+$pos-theme: mat.define-light-theme((
+  color: (
+    primary: $pos-primary,
+    accent: $pos-accent,
+    warn: $pos-warn,
+  ),
+));
+//@include mat.core-theme($our-theme);
+@include mat.all-component-themes($pos-theme);

@@ -1,0 +1,64 @@
+<form
+  [formGroup]="filterForm"
+  #employeeListForm="ngForm"
+  class="filter-border m-1"
+  [ngStyle]="{
+    'border-color': filter.isEmpty() ? 'grey' : 'green'
+  }">
+  @for (field of formFields;track field.name){
+  <mat-form-field class="m-1" [style.width]="field.width">
+
+    <mat-label>{{ field.placeholder | translate }}</mat-label>
+    <input
+      matInput
+      [type]="field.type"
+      [formControlName]="field.name"
+      [placeholder]="field.placeholder | translate"
+    />
+  </mat-form-field>
+  }
+</form>
+<div class="m-1">
+  <button mat-flat-button color="primary" (click)="openAddProduct()">
+    <mat-icon>person_add</mat-icon>
+    {{ 'Add Product' | translate }}
+  </button>
+  <button mat-flat-button color="primary" (click)="openImportProducts()" class="m-1">
+    <mat-icon>import_export</mat-icon>
+    {{ 'Import Products' | translate }}
+  </button>
+</div>
+<div class="product-grid">
+  @for (product of products; track product.name) {
+    <mat-card class="product-card">
+      <mat-card-header>
+        <mat-card-title>{{ product.name }}</mat-card-title>
+        <mat-card-subtitle>{{ product.price | currency }}</mat-card-subtitle>
+      </mat-card-header>
+      <div class="separator">
+        @if (product.image) {
+          <img mat-card-image [src]="product.image" alt="." class="left-group">
+        } @else {
+          <img mat-card-image src="../../../assets/products/apple.png" alt="." class="left-group">
+        }
+        <mat-card-content class="right-group">
+          <small>{{ product.description }}</small>
+        </mat-card-content>
+      </div>
+    </mat-card>
+  } @empty {
+    <div  class="centered">
+      <h3>{{ 'No Products available' | translate }}</h3>
+    </div>
+  }
+
+</div>
+@if (products.length > 0){
+  <mat-paginator
+    [length]="length"
+    [pageSize]="filter.page_size"
+    [pageSizeOptions]="pageSizeOptions"
+    (page)="frontFilter($event)"
+  >
+  </mat-paginator>
+}

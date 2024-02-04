@@ -1,0 +1,75 @@
+<div>
+  <div>
+    <mat-toolbar class="separator" color="primary">
+      <span>{{ 'Add Customer' | translate }}</span>
+      <button mat-button mat-dialog-close>&times;</button>
+    </mat-toolbar>
+  </div>
+  <div class="p-3">
+    @if (this.form) {
+      <form
+        [formGroup]="form"
+        #RegistrationForm="ngForm"
+        novalidate
+        (ngSubmit)="addCustomer()"
+      >
+        <div class="row">
+          <mat-form-field class="col-6">
+            <mat-label>{{ 'Name' | translate }}</mat-label>
+            <input
+              type="text"
+              formControlName="name"
+              placeholder="{{'Name' | translate}}"
+              matInput
+              required
+            />
+            @if (formErrors.name) {
+              <mat-error>
+                {{ formErrors.name }}
+              </mat-error>
+            }
+          </mat-form-field>
+          <mat-form-field class="col-6">
+            <mat-label>{{ 'Email' | translate }}</mat-label>
+            <input
+              type="text"
+              formControlName="email"
+              placeholder="{{'Email' | translate}}"
+              matInput
+              required
+            />
+            @if (formErrors.email) {
+              <mat-error>
+                {{ formErrors.email }}
+              </mat-error>
+            }
+          </mat-form-field>
+        </div>
+        <div class="row">
+          <mat-form-field class="col-6">
+            <mat-label>{{ 'Pricelist' | translate }}</mat-label>
+            <mat-select formControlName="pricelist_id">
+              <mat-option [value]="0">{{ 'No Pricelist' | translate }}</mat-option>
+              @for (pricelist of pricelists;track pricelist.id){
+                <mat-option [value]="pricelist.id">{{ pricelist.name | translate }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+          <div class="col-2"></div>
+          <div class="col-4  mt-5">
+            <button
+              type="submit"
+              mat-flat-button
+              class="right"
+              color="primary"
+              [disabled]="form.invalid"
+            >
+              <mat-icon matTooltip="{{'Add Customer' | translate}}">add</mat-icon>
+              {{'Add Customer' | translate}}
+            </button>
+          </div>
+        </div>
+      </form>
+        }
+  </div>
+</div>

@@ -1,0 +1,26 @@
+<div class="m-1">
+  <button mat-flat-button color="primary" (click)="openAddProgram()">
+    <mat-icon>add</mat-icon>
+    {{ 'Add Program' | translate }}
+  </button>
+</div>
+<mat-accordion>
+  @for (program of baseData; track program.id){
+    <mat-expansion-panel hideToggle>
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          {{program.name}}
+        </mat-panel-title>
+        <mat-panel-description>
+          {{program.description}}
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+      @if (program.type === programType.Coupon){
+        <app-our-table [dataSource]="program.lines" [columns]="couponColumns"></app-our-table>
+      } @else if (program.type === programType.BuyXGetY){
+        <app-our-table [dataSource]="program.lines" [columns]="buyXGetYColumns"></app-our-table>
+      }
+
+    </mat-expansion-panel>
+  }
+</mat-accordion>

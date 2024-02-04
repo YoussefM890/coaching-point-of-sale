@@ -1,0 +1,37 @@
+@import '../../../pos.theme.scss';
+.background-primary{
+  background-color: map-get($pos-primary,500)
+}
+.color-primary{
+  color: map-get($pos-primary,500)
+}
+.color-danger{
+  color: map-get($pos-danger,500)
+}
+.hover-zoom{
+  transition: transform 0.2s;
+  &:hover{
+    transform: scale(1.1);
+  }
+}
+.cursor-pointer{
+  cursor: pointer;
+}
+.edit-icon{
+  color: map-get($pos-primary,500);
+  cursor: pointer;
+  transition: color 0.2s;
+  &:hover{
+    transform: scale(1.1);
+  }
+}
+.delete-icon{
+  color: map-get($pos-danger,500);
+  cursor: pointer;
+  transition: color 0.2s;
+  &:hover{
+    transform: scale(1.1);
+  }
+}
+
+

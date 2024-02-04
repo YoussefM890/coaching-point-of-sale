@@ -1,0 +1,59 @@
+<mat-card>
+  <form
+    novalidate
+    [formGroup]="loginForm"
+    #logForm="ngForm"
+    (ngSubmit)="login()"
+  >
+    <mat-form-field appearence="fill">
+      <input
+        type="email"
+        matInput
+        formControlName="username"
+        placeholder="username"
+        required
+      />
+      @if (formErrors.username){
+        <mat-error>
+          {{ formErrors.username }}
+        </mat-error>
+      }
+    </mat-form-field>
+    <mat-form-field appearence="fill">
+      <input
+        type="text"
+        matInput
+        formControlName="password"
+        placeholder="password"
+        required
+        [type]="hide ? 'password' : 'text'"
+      />
+      <a
+        mat-icon-button
+        matSuffix
+        (click)="changePasswordVisibility()"
+        [attr.aria-label]="'Hide password'"
+        [attr.aria-pressed]="hide"
+      >
+        <mat-icon>{{ hide ? "visibility_off" : "visibility" }}</mat-icon>
+      </a>
+      @if (formErrors.password){
+        <mat-error>
+          {{ formErrors.password }}
+        </mat-error>
+      }
+    </mat-form-field>
+    <button
+      type="submit"
+      mat-flat-button
+      class="right"
+      color="primary"
+      [disabled]="loginForm.invalid"
+    >
+      {{ 'Login' | translate }}
+    </button>
+  </form>
+  <button routerLink="/forgotPassword" mat-button class="right" color="primary">
+    {{ 'Forgot Password?' | translate }}
+  </button>
+</mat-card>

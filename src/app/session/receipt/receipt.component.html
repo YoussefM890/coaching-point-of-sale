@@ -1,0 +1,45 @@
+<mat-dialog-content>
+  <div class="receipt-modal" id="receipt">
+    <div class="receipt-header">Receipt</div>
+    <div class="receipt-body">
+      @if (data.pricelist){
+        <div class="text-center m-2">
+          <span class="receipt-footer fw-bold">{{'Applied Pricelist' | translate}} : </span>
+          <span class="receipt-footer">{{data.pricelist.name}}</span>
+        </div>
+      }
+      <table class="receipt-table">
+        <tr>
+          <th>Item</th>
+          <th>Qty</th>
+          <th>Price</th>
+        </tr>
+@for (line of lines; track line.id) {
+        <tr>
+          <td>{{line.product_name}}</td>
+          <td>{{line.quantity}}</td>
+          <td>{{line.unit_price_after_discount?? line.unit_price | currency}}</td>
+        </tr>
+}
+        <tr>
+          <td class="fw-bold">{{'Total' | translate}}</td>
+          <td></td>
+          <td class="fw-bold">{{data.order.total | currency}}</td>
+        </tr>
+      </table>
+    @if (discounts.length > 0){
+     <div class="receipt-footer fw-bold m-2">{{'Applied Discounts' | translate}}</div>
+      @for (discount of discounts; track discount.code){
+       <div class="receipt-footer mt-1">{{discount.code}}</div>
+      }
+      <p class="total-amount m-2">{{ data.order.total_after_discount |currency}}</p>
+    }
+    </div>
+    <div class="receipt-footer">
+      Thank you for your business!
+    </div>
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-raised-button color="primary" (click)="download()">Download Receipt</button>
+</mat-dialog-actions>

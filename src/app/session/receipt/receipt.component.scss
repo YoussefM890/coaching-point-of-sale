@@ -1,0 +1,51 @@
+/* Receipt Modal Styling */
+.receipt-modal {
+  background: #cfd8dc;
+  padding: 1rem;
+  font-family: 'Arial', sans-serif;
+  color: #333;
+  line-height: 1.5;
+  min-height: 100mm;
+}
+
+.receipt-header {
+  text-align: center;
+  font-size: 1.2em;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.receipt-body {
+  font-size: 1em;
+}
+
+.receipt-footer {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 0.9em;
+}
+
+.receipt-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 15px;
+}
+
+.receipt-table th,
+.receipt-table td {
+  text-align: left;
+  padding: 8px;
+  border-bottom: 1px solid #ddd;
+}
+
+.total-amount {
+  text-align: right;
+  font-weight: bold;
+}
+
+/* Adjustments for smaller screens */
+@media screen and (max-width: 600px) {
+  .receipt-modal {
+    font-size: 0.8em;
+  }
+}

@@ -1,0 +1,199 @@
+<div>
+  <div>
+    <mat-toolbar class="separator" color="primary">
+      <span>{{ 'Add Employee' | translate }}</span>
+      <button mat-button mat-dialog-close>&times;</button>
+    </mat-toolbar>
+  </div>
+  <div class="p-3">
+    @if (this.form) {
+      <form
+        [formGroup]="form"
+        #RegistrationForm="ngForm"
+        novalidate
+        (ngSubmit)="addEmployee()"
+      >
+        <div class="row">
+          <mat-form-field class="col-6">
+            <mat-label>{{ 'First Name' | translate }}</mat-label>
+            <input
+              type="text"
+              formControlName="first_name"
+              placeholder="{{'First Name' | translate}}"
+              matInput
+              required
+            />
+            @if (formErrors.first_name) {
+              <mat-error>
+                {{ formErrors.first_name }}
+              </mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field class="col-6">
+            <mat-label>{{ 'Last Name' | translate }}</mat-label>
+            <input
+              type="text"
+              formControlName="last_name"
+              placeholder="{{'Last Name' | translate}}"
+              matInput
+              required
+            />
+            @if (formErrors.last_name) {
+              <mat-error>
+                {{ formErrors.first_name }}
+              </mat-error>
+            }
+          </mat-form-field>
+        </div>
+        <div class="row">
+          <mat-form-field class="col-6">
+            <mat-label>{{ 'Number' | translate }}</mat-label>
+            <input
+              type="text"
+              formControlName="number"
+              placeholder="{{'Number' | translate}}"
+              matInput
+              required
+            />
+            @if (formErrors.number) {
+              <mat-error>
+                {{ formErrors.number }}
+              </mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field class="col-6">
+            <mat-label>{{ 'Contract Type' | translate }}</mat-label>
+            <mat-select formControlName="gender">
+              @for (gender of genders;track gender.value){
+                <mat-option [value]="gender.value">{{ gender.viewValue | translate }}</mat-option>
+              }
+            </mat-select>
+            @if (formErrors.gender) {
+              <mat-error>
+                {{ formErrors.gender }}
+              </mat-error>
+            }
+          </mat-form-field>
+        </div>
+        <div class="row">
+
+          <mat-form-field class="col-6">
+            <mat-label>{{ 'Phone' | translate }}</mat-label>
+            <input
+              type="number"
+              formControlName="phone"
+              placeholder="{{'Phone' | translate}}"
+              matInput
+              required
+            />
+            @if (formErrors.phone) {
+              <mat-error>
+                {{ formErrors.phone }}
+              </mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field class="col-6">
+            <mat-label>{{ 'Job Position' | translate }}</mat-label>
+            <input
+              type="text"
+              formControlName="job_position"
+              placeholder="{{ 'Job Position' | translate }}"
+              matInput
+              required
+            />
+            @if (formErrors.job_position) {
+              <mat-error>
+                {{ formErrors.job_position }}
+              </mat-error>
+            }
+          </mat-form-field>
+        </div>
+        <div class="row">
+          <mat-form-field class="col-6">
+            <mat-label>{{ 'Address' | translate }}</mat-label>
+            <input
+              type="text"
+              formControlName="address"
+              placeholder="{{ 'Address' | translate }}"
+              matInput
+              required
+            />
+            @if (formErrors.address) {
+              <mat-error>
+                {{ formErrors.address }}
+              </mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field class="col-6">
+            <mat-label>{{ 'Birth Date' | translate }}</mat-label>
+            <input
+              matInput
+              [matDatepicker]="picker"
+              formControlName="birth_date"
+              placeholder="{{ 'Birth Date' | translate }}"
+              required
+            />
+            <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+            @if (formErrors.birth_date) {
+              <mat-error>
+                {{ formErrors.birth_date }}
+              </mat-error>
+            }
+          </mat-form-field>
+        </div>
+        <div class="row">
+
+          <mat-form-field class="col-6">
+            <mat-label>{{ 'Contract Type' | translate }}</mat-label>
+            <mat-select formControlName="contract_type">
+              @for (type of contractTypes;track type.value){
+              <mat-option [value]="type.value">{{ type.viewValue | translate }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field class="col-6">
+            <mat-label>{{ 'Cnss Registration Number' | translate }}</mat-label>
+            <input
+              type="text"
+              formControlName="cnss_registration_number"
+              placeholder="{{ 'Cnss Registration Number' | translate }}"
+              matInput
+              required
+            />
+            @if (formErrors.cnss_registration_number) {
+              <mat-error>
+                {{ formErrors.cnss_registration_number }}
+              </mat-error>
+            }
+          </mat-form-field>
+        </div>
+        <div class="row">
+          <div class="col-6 flex-center">
+            <mat-slide-toggle class="" formControlName="is_active"></mat-slide-toggle>
+            <span class="ms-3">{{ 'Active' | translate }}</span>
+          </div>
+          <div class="col-2"></div>
+          <div class="col-4  mt-5">
+          <button
+            type="submit"
+            mat-flat-button
+            class="right"
+            color="primary"
+            [disabled]="form.invalid"
+          >
+            <mat-icon matTooltip="{{'Add Employee' | translate}}">add</mat-icon>
+            {{'Add Employee' | translate}}
+          </button>
+          </div>
+        </div>
+
+      </form>
+    }
+  </div>
+</div>

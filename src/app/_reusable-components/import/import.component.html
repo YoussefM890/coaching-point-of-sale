@@ -1,0 +1,143 @@
+<mat-toolbar class="separator" color="primary">
+  <span>{{ 'Import Employees' | translate }}</span>
+  <button mat-button mat-dialog-close>&times;</button>
+</mat-toolbar>
+<!--form was here -->
+<input (change)="this.onFileChange($event)"
+       class="form-control hwa"
+       type="file"
+/>
+<div>
+  @if (matchingForm){
+  <form novalidate [formGroup]="matchingForm">
+    <div class="table-container">
+    <table class="scrollable-table">
+      <tr>
+        @for (field of csvFields;track field){
+        <th>
+          <mat-form-field>
+            <mat-label>{{field}}</mat-label>
+            <mat-select formControlName="{{field}}">
+              <mat-option></mat-option>
+              @for(possibleField of possibleFields;track  possibleField.value){
+              <mat-option [value]="possibleField.value" [disabled]="possibleField.disabled">
+                {{ possibleField.viewValue }}
+              </mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        </th>
+        }
+      </tr>
+      @for (row of rows;track row){
+      <tr>
+        @for (col of row;track col){
+        <td>{{col}}</td>
+        }
+      </tr>
+      }
+    </table>
+    </div>
+    @if (errors){
+    <div class="alert multiline alert-danger" role="alert">
+      {{ errors }}
+    </div>
+    }
+    @if (warning){
+    <div class="alert multiline alert-warning" role="alert">
+      {{ warning }}
+    </div>
+    }
+    <div class="form-row">
+      <button
+        mat-flat-button
+        class="right hwa"
+        color="primary"
+        [disabled]="matchingForm.invalid"
+        (click)="upload()">
+        <mat-icon matTooltip="{{'Import' | translate}}">unarchive</mat-icon>
+        {{'Import' | translate}}
+      </button>
+      @if (warning && (errors == null) && !matchedValuesChanged){
+      <button
+              mat-flat-button
+              class="right hwa"
+              color="primary"
+              [disabled]="matchingForm.invalid"
+              (click)="upload(true)">
+        <mat-icon matTooltip="Importer">warning</mat-icon>
+        Forcer l'Import
+      </button>
+      } @else if (warning && (errors == null) && !matchedValuesChanged){
+      <button
+              mat-flat-button
+              class="right hwa"
+              color="primary"
+              [disabled]="matchingForm.invalid"
+              (click)="exportWarning()">
+        <mat-icon matTooltip="Importer">file_copy</mat-icon>
+        Telecharger le rapport d'erreurs
+      </button>
+      }
+      <br/>
+    </div>
+  </form>
+  }
+</div>
+<div class="centered" [hidden]="loaded">
+  <mat-spinner></mat-spinner>
+  <h4>Import en cours ...</h4>
+</div>
+
+
+<!--<div>-->
+<!--  @if(form){-->
+<!--  <form novalidate-->
+<!--        [formGroup]="form"-->
+<!--        #importTimesheetForm="ngForm"-->
+<!--        (ngSubmit)="prepare()">-->
+<!--    <input (change)="this.onFilechange($event)"-->
+<!--           class="form-control hwa"-->
+<!--           type="file"-->
+<!--    />-->
+<!--    <mat-form-field class="hwa">-->
+<!--      <mat-label>Année</mat-label>-->
+<!--      <mat-select formControlName="year">-->
+<!--        @for (year of years;track year.value){-->
+<!--        <mat-option [value]="year.value">-->
+<!--          {{ year.viewValue }}-->
+<!--        </mat-option>-->
+<!--        }-->
+<!--        @if (formErrors.year){-->
+<!--        <mat-error>-->
+<!--          {{ formErrors.year }}-->
+<!--        </mat-error>-->
+<!--        }-->
+<!--      </mat-select>-->
+<!--    </mat-form-field>-->
+<!--    <mat-form-field class="hwa">-->
+<!--      <mat-label>Mois</mat-label>-->
+<!--      <mat-select formControlName="month">-->
+<!--        @for (month of months;track month.value){-->
+<!--        <mat-option [value]="month.value">-->
+<!--          {{ month.viewValue }}-->
+<!--        </mat-option>-->
+<!--        }-->
+<!--        @if (formErrors.month){-->
+<!--        <mat-error>-->
+<!--          {{ formErrors.month }}-->
+<!--        </mat-error>-->
+<!--        }-->
+<!--      </mat-select>-->
+<!--    </mat-form-field>-->
+<!--    <button mat-flat-button color="primary"-->
+<!--            (click)="prepare()"-->
+<!--            class="hwa"-->
+<!--            [disabled]="form.invalid"-->
+<!--    >-->
+<!--      <mat-icon>save_alt</mat-icon>-->
+<!--      Charger-->
+<!--    </button>-->
+<!--  </form>-->
+<!--  }-->
+<!--</div>-->

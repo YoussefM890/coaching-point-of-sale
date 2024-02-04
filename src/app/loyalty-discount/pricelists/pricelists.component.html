@@ -1,0 +1,21 @@
+<div class="m-1">
+  <button mat-flat-button color="primary">
+    <mat-icon>add</mat-icon>
+    {{ 'Add Pricelist' | translate }}
+  </button>
+</div>
+<mat-accordion>
+  @for (pricelist of baseData; track pricelist.id){
+  <mat-expansion-panel hideToggle>
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        {{pricelist.name}}
+      </mat-panel-title>
+      <mat-panel-description>
+        {{pricelist.description}}
+      </mat-panel-description>
+    </mat-expansion-panel-header>
+    <app-our-table [dataSource]="pricelist.lines" [columns]="columns"></app-our-table>
+  </mat-expansion-panel>
+  }
+</mat-accordion>
