@@ -21,7 +21,11 @@
 <div class="m-1">
   <button mat-flat-button color="primary" (click)="openAddCustomer()">
     <mat-icon>person_add</mat-icon>
-    {{ 'Add Employee' | translate }}
+    {{ 'Add Customer' | translate }}
+  </button>
+  <button mat-flat-button color="primary" (click)="openImportCustomers()" class="m-1">
+    <mat-icon>import_export</mat-icon>
+    {{ 'Import Customers' | translate }}
   </button>
 </div>
 @if (datasource && datasource.length > 0){

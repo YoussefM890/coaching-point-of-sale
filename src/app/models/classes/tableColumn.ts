@@ -4,12 +4,14 @@ export class TableColumn {
   value : string
   viewValue : string
   type : TableColumnType  = TableColumnType.Text
+  icon? : string = null;
   useTranslation?: boolean = false;
   staticValue?: string = null;
-  icon?: string = null;
   parentClasses: (CssClass | string)[] = [];
   childClasses: (CssClass | string)[] = [];
   onClickMethodName?: string = null;
+  getValue?: (arg?: any) => string;
+  getIcon?:(arg? : any) => string;
   onClick?:(arg?:any) => void = () => {};
 }
 export function getDisplayedColumns(columns : TableColumn[]) : string[] {

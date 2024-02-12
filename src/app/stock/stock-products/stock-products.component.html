@@ -39,7 +39,7 @@
         @if (product.image) {
           <img mat-card-image [src]="product.image" alt="." class="left-group">
         } @else {
-          <img mat-card-image src="../../../assets/products/apple.png" alt="." class="left-group">
+          <img mat-card-image [src]="product.image_path" alt="." class="left-group">
         }
         <mat-card-content class="right-group">
           <small>{{ product.description }}</small>

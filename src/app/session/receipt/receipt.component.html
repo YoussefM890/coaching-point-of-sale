@@ -29,9 +29,15 @@
       </table>
     @if (discounts.length > 0){
      <div class="receipt-footer fw-bold m-2">{{'Applied Discounts' | translate}}</div>
-      @for (discount of discounts; track discount.code){
-       <div class="receipt-footer mt-1">{{discount.code}}</div>
+        <table class="receipt-table">
+          @for (discount of discounts; track discount.code){
+          <tr>
+            <td>{{getDiscountType(discount)}}</td>
+            <td>{{discount.code}}</td>
+            <td>-{{discount.amount | currency}}</td>
+          </tr>
       }
+        </table>
       <p class="total-amount m-2">{{ data.order.total_after_discount |currency}}</p>
     }
     </div>

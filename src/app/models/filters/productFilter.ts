@@ -4,16 +4,19 @@ import {createFormField} from "../functions";
 
 export class ProductFilter extends PaginationFilter {
     name_substr?: string;
+    category_id?: number;
     category_substr?: string;
     price_min?: number;
     price_max?: number;
     quantity_min?: number;
     quantity_max?: number;
 
+
     constructor() {
         super();
         this.filter_fields = this.filter_fields.concat([
           'name_substr',
+          'category_id',
           'category_substr',
           'price_min',
           'price_max',

@@ -1,7 +1,6 @@
 import {Routes} from '@angular/router';
 import {LoginComponent} from "./login/login.component";
 import {StockComponent} from "./stock/stock.component";
-import {StockProductsComponent} from "./stock/stock-products/stock-products.component";
 import {OrdersComponent} from "./orders/orders.component";
 import {SessionsComponent} from "./sessions/sessions.component";
 import {EmployeeDetailsComponent} from "./employees/employee-details/employee-details.component";
@@ -9,6 +8,7 @@ import {SessionComponent} from "./session/session.component";
 import {NavComponent} from "./nav/nav.component";
 import {LoyaltyDiscountComponent} from "./loyalty-discount/loyalty-discount.component";
 import {CustomersComponent} from "./customers/customers.component";
+import {DashboardComponent} from "./dashboard/dashboard.component";
 
 export const routes: Routes = [
   // { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -16,6 +16,7 @@ export const routes: Routes = [
     path: '',
     component: NavComponent,
     children: [
+      {path: 'dashboard', component : DashboardComponent},
       {path: 'employees', component: EmployeeDetailsComponent},
       {path: 'stock', component: StockComponent},
       {path: 'orders', component: OrdersComponent},

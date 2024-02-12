@@ -4,11 +4,11 @@
       <th mat-header-cell *matHeaderCellDef>{{ col.viewValue | translate }}</th>
       <td mat-cell *matCellDef="let element" [ngClass]="col.parentClasses" (click)="col.onClick(element)">
         @if (col.type === tableColumnType.Text) {
-          {{ col.useTranslation ? (element[col.value] | translate) : element[col.value] }}
+          {{ col.useTranslation ? (col.getValue(element) | translate) : element[col.value] }}
         } @else if (col.type === tableColumnType.Date) {
           {{ element[col.value] | date }}
         } @else if (col.type === tableColumnType.Icon) {
-          <mat-icon [ngClass]="col.childClasses">{{ col.icon?? element[col.value]}}</mat-icon>
+          <mat-icon [ngClass]="col.childClasses">{{ col.getIcon(element)}}</mat-icon>
         } @else if (col.type === tableColumnType.StaticText) {
           {{ col.staticValue }}
         }

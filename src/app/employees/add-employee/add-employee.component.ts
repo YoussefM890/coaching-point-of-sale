@@ -62,6 +62,7 @@ export class AddEmployeeComponent implements OnInit, OnDestroy {
       number: [data ? data.employee.number : null, [Validators.required]],
       first_name: [data ? this.first_name : null, [Validators.required]],
       last_name: [data ? this.last_name : null, [Validators.required]],
+      email: [data ? data.employee.email : null, [Validators.required]],
       gender: [data ? data.employee.gender : null, [Validators.required]],
       phone: [data ? data.employee.phone : null, [Validators.required]],
       job_position: [data ? data.employee.job_position : null, [Validators.required]],

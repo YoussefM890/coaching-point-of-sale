@@ -48,6 +48,21 @@
         </div>
         <div class="row">
           <mat-form-field class="col-6">
+            <mat-label>{{ 'Email' | translate }}</mat-label>
+            <input
+              type="email"
+              formControlName="email"
+              placeholder="{{'Email' | translate}}"
+              matInput
+              required
+            />
+            @if (formErrors.email) {
+              <mat-error>
+                {{ formErrors.email }}
+              </mat-error>
+            }
+          </mat-form-field>
+          <mat-form-field class="col-6">
             <mat-label>{{ 'Number' | translate }}</mat-label>
             <input
               type="text"
@@ -63,8 +78,11 @@
             }
           </mat-form-field>
 
+
+        </div>
+        <div class="row">
           <mat-form-field class="col-6">
-            <mat-label>{{ 'Contract Type' | translate }}</mat-label>
+            <mat-label>{{ 'Gender' | translate }}</mat-label>
             <mat-select formControlName="gender">
               @for (gender of genders;track gender.value){
                 <mat-option [value]="gender.value">{{ gender.viewValue | translate }}</mat-option>
@@ -76,24 +94,8 @@
               </mat-error>
             }
           </mat-form-field>
-        </div>
-        <div class="row">
 
-          <mat-form-field class="col-6">
-            <mat-label>{{ 'Phone' | translate }}</mat-label>
-            <input
-              type="number"
-              formControlName="phone"
-              placeholder="{{'Phone' | translate}}"
-              matInput
-              required
-            />
-            @if (formErrors.phone) {
-              <mat-error>
-                {{ formErrors.phone }}
-              </mat-error>
-            }
-          </mat-form-field>
+
 
           <mat-form-field class="col-6">
             <mat-label>{{ 'Job Position' | translate }}</mat-label>
@@ -113,6 +115,22 @@
         </div>
         <div class="row">
           <mat-form-field class="col-6">
+            <mat-label>{{ 'Phone' | translate }}</mat-label>
+            <input
+              type="number"
+              formControlName="phone"
+              placeholder="{{'Phone' | translate}}"
+              matInput
+              required
+            />
+            @if (formErrors.phone) {
+              <mat-error>
+                {{ formErrors.phone }}
+              </mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field class="col-6">
             <mat-label>{{ 'Address' | translate }}</mat-label>
             <input
               type="text"
@@ -128,6 +146,9 @@
             }
           </mat-form-field>
 
+
+        </div>
+        <div class="row">
           <mat-form-field class="col-6">
             <mat-label>{{ 'Birth Date' | translate }}</mat-label>
             <input
@@ -145,8 +166,6 @@
               </mat-error>
             }
           </mat-form-field>
-        </div>
-        <div class="row">
 
           <mat-form-field class="col-6">
             <mat-label>{{ 'Contract Type' | translate }}</mat-label>
@@ -157,6 +176,8 @@
             </mat-select>
           </mat-form-field>
 
+        </div>
+        <div class="row">
           <mat-form-field class="col-6">
             <mat-label>{{ 'Cnss Registration Number' | translate }}</mat-label>
             <input

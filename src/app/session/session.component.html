@@ -1,5 +1,12 @@
 <div [style.height]="'7.2vh'">
-  <button mat-raised-button color="accent" class="exit-button" [matMenuTriggerFor]="exitMenu" >{{'Exit Session' | translate}}</button>
+  <button
+    mat-raised-button
+    color="accent"
+    class="exit-button"
+    [matMenuTriggerFor]="exitMenu"
+    [disabled]="this.orderLines.length !== 0"
+  >{{ 'Exit Session' | translate }}
+  </button>
   <mat-menu #exitMenu="matMenu">
     <button mat-menu-item (click)="endSession()">End Session</button>
     <button mat-menu-item (click)="pauseSession()">Pause Session</button>
@@ -9,13 +16,13 @@
   <!--  order lines-->
   <mat-grid-tile
     [colspan]="1"
-    [rowspan]="5"
+    [rowspan]="4"
     [style.background]="'#f6f7f8'">
     <div class="p-1 vertical-separator w-100 h-100">
       <mat-list role="list" class="w-100">
         @for (line of orderLines; track line.id) {
           <mat-list-item role="listitem" (click)="selectLine(line.id)"
-                         [class.selected-order-line]="selectedLine == line.id">
+                         [class.selected-order-line]="isSelectedLine == line.id">
             <div class="row">
               <div class="col">
                 {{ line.product_name }}
@@ -39,16 +46,27 @@
         }
       </mat-list>
       <div class="d-flex justify-content-end w-100">
-        <div class="price-container">
-          @if (appliedProgramLines.length > 0) {
-            <div class="total">
-              Total: <s>{{ currentOrder.total | currency }}</s> {{ currentOrder.total_after_discount | currency }}
+      <div class="d-flex flex-column">
+          <!-- Each child div with mt-auto for bottom alignment and text-end for right alignment -->
+        @for (appliedProgramLine of appliedProgramLines; track appliedProgramLine.code) {
+          <div class="mt-auto text-end">
+            <span>{{getProgramType(appliedProgramLine)}} : </span>{{ appliedProgramLine.code}}  <span class="total"> -{{ appliedProgramLine.amount | currency }}</span>
+          </div>
+        }
+          <!-- The third div also aligned to the right -->
+          <div class="mt-auto text-end">
+            <div class="price-container">
+              @if (appliedProgramLines.length > 0) {
+                <div class="total">
+                  Total: <s>{{ currentOrder.total | currency }}</s> {{ currentOrder.total_after_discount | currency }}
+                </div>
+              } @else {
+                <div class="total">
+                  Total: {{ currentOrder.total | currency }}
+                </div>
+              }
             </div>
-          } @else {
-            <div class="total">
-              Total: {{ currentOrder.total | currency }}
-            </div>
-          }
+          </div>
         </div>
       </div>
     </div>
@@ -63,15 +81,15 @@
         <button
           class="category-button"
           (click)="filterProducts(0)"
-          [class.selected-category]="selectedCategory === 0"
+          [class.selected-category]="categoryControl.value === 0"
         >
           <mat-icon class="mb-1">home</mat-icon>
         </button>
         @for (category of categories; track category.id) {
 
           <button class="category-button"
-                  (click)="filterProducts(category.id)"
-                  [class.selected-category]="selectedCategory === category.id">
+                  (click)="categoryControl.setValue(category.id)"
+                  [class.selected-category]="categoryControl.value === category.id">
             <mat-icon class="mb-1">{{ category.icon }}</mat-icon>
             <span class="mt-1">{{ category.name }}</span>
           </button>
@@ -83,6 +101,7 @@
           <input
             class="search-input"
             type="text"
+            [formControl]="nameControl"
             placeholder="{{ 'Search products' | translate }}"
           />
         </div>
@@ -98,18 +117,16 @@
       @for (product of products; track product.id) {
 
         <mat-card class="product-card" (click)="addOrderLine(product)">
-          <mat-card-header class="pt-0">
-            <!--        <div mat-card-avatar class="example-header-image"></div>-->
-            <!--        <img mat-card-image src="https://material.angular.io/assets/img/examples/shiba2.jpg" alt="Photo of a Shiba Inu">-->
+          <mat-card-header class="product-card-header">
             @if (product.image) {
               <img mat-card-image [src]="product.image" alt="." class="left-group">
             } @else {
-              <img mat-card-image src="../../../assets/products/apple.png" alt="." class="left-group">
+              <img mat-card-image [src]="product.image_path" alt="." class="left-group">
             }
           </mat-card-header>
-          <mat-card-content>
-            <mat-card-title><small>{{ product.name }}</small></mat-card-title>
-            <mat-card-subtitle>
+          <mat-card-content class="vertical-separator">
+            <mat-card-title class="product-name">{{ product.name }}</mat-card-title>
+            <mat-card-footer class="product-price">
               @if (product.price_after_discount) {
                 <small>
                   <s>{{ product.price | currency }}</s> {{ product.price_after_discount | currency }}
@@ -117,54 +134,62 @@
               } @else {
                 <small>{{ product.price | currency }}</small>
               }
-            </mat-card-subtitle>
+            </mat-card-footer>
           </mat-card-content>
-          <!--      <mat-card-actions>-->
-          <!--        <button mat-button>LIKE</button>-->
-          <!--        <button mat-button>SHARE</button>-->
-          <!--      </mat-card-actions>-->
         </mat-card>
       }
+      <div class="filler-card"></div>
     </div>
   </mat-grid-tile>
   <!--  payment-->
   <mat-grid-tile
+    class="p-0"
     [colspan]="1"
-    [rowspan]="1"
+    [rowspan]="2"
     [style.background]="'#fff'">
-    <div class="vertical-separator w-100 h-100">
-      <!--    <mat-grid-list cols="6" rowHeight="25%" class="h-100 w-100">-->
-      <!--      @for (tile of tiles; track tile) {-->
-      <!--        <mat-grid-tile-->
-      <!--          [colspan]="tile.cols"-->
-      <!--          [rowspan]="tile.rows"-->
-      <!--        >-->
-      <div>
-        <button mat-raised-button color="accent" (click)="pay()" [disabled]="orderLines.length === 0">Pay
+    <div class="px-1 h-100">
+      <div class="row">
+        <button mat-raised-button color="accent" class="col-6 payment-button" (click)="pay()" [disabled]="!isPayable">
           <mat-icon>payment</mat-icon>
+          Pay
         </button>
-        <button mat-raised-button color="accent" (click)="subtractQuantity()" [disabled]="selectedLine == null">-
-        </button>
-        <button mat-raised-button color="accent" (click)="addQuantity()" [disabled]="selectedLine == null">+</button>
-        <button mat-raised-button color="primary"
-                [matMenuTriggerFor]="menu">{{ selectedPricelist ? selectedPricelist.name : ("Normal prices" | translate) }}
-        </button>
-        <mat-menu #menu="matMenu">
-          <button mat-menu-item (click)="applyPricelist()">Normal prices</button>
-          @for (pricelist of pricelists; track pricelist.id) {
-            <button mat-menu-item (click)="applyPricelist(pricelist)">{{ pricelist.name }}</button>
-          }
-        </mat-menu>
+        <div class="col-6 d-flex justify-content-around">
+          <button mat-mini-fab (click)="subtractQuantity()" [disabled]="!isSelectedLine">
+            <mat-icon>remove</mat-icon>
+          </button>
+          <button mat-mini-fab (click)="addQuantity()" [disabled]="!isSelectedLine">
+            <mat-icon>add</mat-icon>
+          </button>
+        </div>
       </div>
-      <div>
-        <input
-          type="text"
-          placeholder="{{ 'Discount Code' | translate }}"
-          [(ngModel)]="discountCode"
-        >
-        <button mat-raised-button color="primary" (click)="applyDiscount()">Apply</button>
-        <button mat-raised-button color="warn" (click)="resetDiscount()">Reset</button>
+      <div class="row">
+        <mat-form-field appearance="fill" class="col-6">
+          <mat-select placeholder="Select Customer" (selectionChange)="selectCustomer()" [(value)]="selectedCustomer">
+            @for (customer of customers; track customer.id) {
+              <mat-option [value]="customer">{{ customer.name }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="fill" class="col-6">
+          <mat-select placeholder="Select Price List" [(value)]="selectedPricelist">
+            <mat-option>Normal prices</mat-option>
+            @for (pricelist of pricelists; track pricelist.id) {
+              <mat-option [value]="pricelist">{{ pricelist.name }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
       </div>
+      <div class="row">
+        <mat-form-field appearance="fill" class="col-6">
+          <input matInput placeholder="Discount Code" [(ngModel)]="discountCode">
+        </mat-form-field>
+        <div class="col-6 d-flex justify-content-around align-items-center">
+          <button mat-button (click)="applyDiscount()">Apply</button>
+          <button mat-button color="warn" (click)="resetDiscount()">Reset</button>
+        </div>
+      </div>
+
     </div>
   </mat-grid-tile>
 </mat-grid-list>

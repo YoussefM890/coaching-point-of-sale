@@ -58,15 +58,15 @@
         <mat-icon matTooltip="{{'Import' | translate}}">unarchive</mat-icon>
         {{'Import' | translate}}
       </button>
-      @if (warning && (errors == null) && !matchedValuesChanged){
+      @if (warning && errors == '' && !matchedValuesChanged){
       <button
               mat-flat-button
-              class="right hwa"
+              class="right me-1"
               color="primary"
               [disabled]="matchingForm.invalid"
               (click)="upload(true)">
-        <mat-icon matTooltip="Importer">warning</mat-icon>
-        Forcer l'Import
+        <mat-icon matTooltip="Import">warning</mat-icon>
+        Force Import
       </button>
       } @else if (warning && (errors == null) && !matchedValuesChanged){
       <button

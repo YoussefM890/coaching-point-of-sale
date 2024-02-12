@@ -30,7 +30,7 @@ export const fields:Partial<TableColumn>[] = [
     value: 'edit',
     viewValue: 'Edit',
     type: TableColumnType.Icon,
-    icon: 'edit',
+    icon  :  'edit',
     childClasses: [CssClass.EditIcon],
     onClickMethodName: "openEditPricelist",
   },
@@ -38,7 +38,8 @@ export const fields:Partial<TableColumn>[] = [
     value: 'delete',
     viewValue: 'Delete',
     type: TableColumnType.Icon,
-    icon: 'delete',
+    icon  :  'delete',
+
     childClasses: [CssClass.DeleteIcon],
     onClickMethodName: "openDeletePricelist",
   }

@@ -9,11 +9,11 @@ export const fields:Partial<TableColumn>[] = [
     viewValue:'Code',
   },
   {
-    value: 'buy',
+    value: 'buy_name',
     viewValue: 'Buy',
   },
   {
-    value: 'get',
+    value: 'get_name',
     viewValue: 'Get',
   },
   {
@@ -22,19 +22,19 @@ export const fields:Partial<TableColumn>[] = [
   },
   {
     value: 'edit',
-    viewValue: 'Edit',
+    viewValue: 'Send',
     type: TableColumnType.Icon,
-    icon: 'edit',
+    icon : 'send',
     onClickMethodName: "openEditProgramLine",
     childClasses: [CssClass.EditIcon]
   },
   {
     value: 'delete',
-    viewValue: 'Delete',
+    viewValue: 'Print',
     type: TableColumnType.Icon,
-    icon: 'delete',
+    icon:  'local_printshop',
     onClickMethodName: "openDeleteProgramLine",
-    childClasses: [CssClass.DeleteIcon]
+    childClasses: [CssClass.EditIcon]
   }
 ]
 export const programBuyXGetYColumns : TableColumn[] = fields.map(config => createTableColumn(config));

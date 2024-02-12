@@ -1,15 +1,15 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {MatGridListModule} from "@angular/material/grid-list";
 import {MatListModule} from "@angular/material/list";
 import {CurrencyPipe, DecimalPipe} from "@angular/common";
 import {MatCardModule} from "@angular/material/card";
-import {FormsModule, ReactiveFormsModule} from "@angular/forms";
+import {FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatInputModule} from "@angular/material/input";
 import {TranslateModule} from "@ngx-translate/core";
 import {MatIconModule} from "@angular/material/icon";
 import {
-  dummyCategories,
+  dummyCategories, dummyCustomers,
   dummyOrders,
   dummyOrdersLines,
   dummyPricelists,
@@ -19,7 +19,7 @@ import {
 import {OrderLine} from "../models/classes/orderLine";
 import {Product} from "../models/classes/product";
 import {Order} from "../models/classes/order";
-import {MatButton} from "@angular/material/button";
+import {MatButton, MatMiniFabButton} from "@angular/material/button";
 import {Pricelist} from "../models/classes/pricelist";
 import {MatMenu, MatMenuItem, MatMenuTrigger} from "@angular/material/menu";
 import {MatDialog} from "@angular/material/dialog";
@@ -33,6 +33,12 @@ import {Program} from "../models/classes/program";
 import {Router, RouterLink} from "@angular/router";
 import {Session} from "../models/classes/Session";
 import {SessionStatus} from "../models/enums/sessionStatus";
+import {PageEvent} from "@angular/material/paginator";
+import {debounceTime, Subscription} from "rxjs";
+import {ProductFilter} from "../models/filters/productFilter";
+import {Customer} from "../models/classes/customer";
+import {MatOption, MatSelect} from "@angular/material/select";
+import {deep_copy} from "../models/functions";
 
 export interface Tile {
   color: string;
@@ -40,12 +46,6 @@ export interface Tile {
   rows: number;
   text: string;
   class?: string;
-}
-
-export interface Item {
-  name: string;
-  quantity: number;
-  unitPrice: number;
 }
 
 @Component({
@@ -67,62 +67,66 @@ export interface Item {
     MatMenuTrigger,
     MatMenu,
     MatMenuItem,
-    RouterLink
+    RouterLink,
+    MatSelect,
+    MatOption,
+    MatMiniFabButton
   ],
   templateUrl: './session.component.html',
   styleUrl: './session.component.scss'
 })
-export class SessionComponent implements OnInit {
-  tiles: Tile[] = [
-    {text: 'Payment', cols: 2, rows: 4, color: '#ad1457', class: 'pink-button'},
-    {text: '1', cols: 1, rows: 1, color: '#cfd8dc', class: 'gray-button'},
-    {text: '2', cols: 1, rows: 1, color: '#cfd8dc', class: 'gray-button'},
-    {text: '3', cols: 1, rows: 1, color: '#cfd8dc', class: 'gray-button'},
-    {text: 'Qty', cols: 1, rows: 1, color: '#cfd8dc', class: 'gray-button'},
-    {text: '4', cols: 1, rows: 1, color: '#cfd8dc', class: 'gray-button'},
-    {text: '5', cols: 1, rows: 1, color: '#cfd8dc', class: 'gray-button'},
-    {text: '6', cols: 1, rows: 1, color: '#cfd8dc', class: 'gray-button'},
-    {text: 'Disc', cols: 1, rows: 1, color: '#cfd8dc', class: 'gray-button'},
-    {text: '7', cols: 1, rows: 1, color: '#cfd8dc', class: 'gray-button'},
-    {text: '8', cols: 1, rows: 1, color: '#cfd8dc', class: 'gray-button'},
-    {text: '9', cols: 1, rows: 1, color: '#cfd8dc', class: 'gray-button'},
-    {text: 'Price', cols: 1, rows: 1, color: '#cfd8dc', class: 'gray-button'},
-    {text: '<', cols: 1, rows: 1, color: '#cfd8dc', class: 'gray-button'},
-    {text: '>', cols: 1, rows: 1, color: '#cfd8dc', class: 'gray-button'},
-    {text: '.', cols: 1, rows: 1, color: '#cfd8dc', class: 'gray-button'},
-    {text: 'Back', cols: 1, rows: 1, color: '#cfd8dc', class: 'gray-button'},
-  ];
+export class SessionComponent implements OnInit, OnDestroy {
+  valueChangedSubscription: Subscription;
+  filter: ProductFilter;
+  filterForm: FormGroup;
+
   sessions: Session[] = dummySessions;
   categories = dummyCategories;
-  products: Product[] = dummyProducts;
+  products: Product[] = deep_copy(dummyProducts);
   pricelists: Pricelist[] = dummyPricelists;
+  customers: Customer[] = dummyCustomers;
   orders: Order[] = dummyOrders;
   programs: Program[] = dummyPrograms;
   orderLines: OrderLine[] = [];
-  selectedLine: number = null;
-  selectedCategory = 0;
+  isSelectedLine: number = null;
   selectedPricelist: Pricelist = null;
+  selectedCustomer: Customer = null;
   appliedProgramLines: (Coupon | BuyXGetY)[] = []
   discountCode: string;
   currentOrder: Order;
   currentSession: Session;
 
+
   constructor(
     private dialog: MatDialog,
-    private router: Router
+    private router: Router,
+    private fb: FormBuilder
   ) {
+    this.filter = new ProductFilter()
   }
 
   ngOnInit() {
     this.initSession()
-  }
+    this.createForm();
+    console.log(this.customers)
 
+  }
+  createForm() {
+    this.filterForm = this.fb.group({
+      name_substr: [''],
+      category_id: [0],
+    });
+    this.valueChangedSubscription  = this.filterForm.valueChanges
+      .pipe(debounceTime(0))
+      .subscribe((data) => this.frontFilter());
+  }
   initSession() {
     this.currentSession = this.sessions.find(item => item.status === SessionStatus.Open);
     if (!this.currentSession) {
       this.currentSession = {
         id: this.sessions.length + 1,
         opened_by: 1,
+        employee_name: 'Youssef Maaouia',
         opened_at: new Date(),
         closed_at: null,
         status: SessionStatus.Open
@@ -138,7 +142,7 @@ export class SessionComponent implements OnInit {
       date: new Date(),
       receipt_number: 'Rec001',
       employee_id: 1,
-      customer_id: 1,
+      customer_id: 0,
       pricelist_id: 0,
       total: 0,
       total_after_discount: 0,
@@ -181,6 +185,7 @@ export class SessionComponent implements OnInit {
             this.addToDictionary(usedProducts, programLine.buy, 1);
             this.addToDictionary(usedProducts, programLine.get, 1);
             this.currentOrder.total_after_discount -= getItemLine.unit_price_after_discount ?? getItemLine.unit_price;
+            programLine.amount = getItemLine.unit_price_after_discount ?? getItemLine.unit_price;
           }
         }
       }
@@ -191,6 +196,7 @@ export class SessionComponent implements OnInit {
       if ('discount' in programLine) {
         // Assuming discount is a percentage value
         this.currentOrder.total_after_discount *= (1 - (programLine.discount / 100));
+        programLine.amount = this.currentOrder.total_after_discount * (programLine.discount / 100);
       }
     });
 
@@ -203,12 +209,8 @@ export class SessionComponent implements OnInit {
 
 
   filterProducts(id: number) {
-    this.selectedCategory = id;
-    if (id === 0) {
-      this.products = dummyProducts;
-      return;
-    }
     this.products = dummyProducts.filter(product => product.category_id === id);
+    this.categoryControl.setValue(id);
   }
 
   addOrderLine(product: Product) {
@@ -235,16 +237,16 @@ export class SessionComponent implements OnInit {
   }
 
   selectLine(lineId: number) {
-    if (this.selectedLine === lineId) {
-      this.selectedLine = null;
+    if (this.isSelectedLine === lineId) {
+      this.isSelectedLine = null;
       return;
     }
-    this.selectedLine = lineId;
+    this.isSelectedLine = lineId;
   }
 
   addQuantity() {
-    if (this.selectedLine != null) {
-      const line = this.orderLines.find(line => line.id === this.selectedLine);
+    if (this.isSelectedLine != null) {
+      const line = this.orderLines.find(line => line.id === this.isSelectedLine);
       if (line) {
         line.quantity += 1;
       }
@@ -253,21 +255,27 @@ export class SessionComponent implements OnInit {
   }
 
   subtractQuantity() {
-    if (this.selectedLine != null) {
-      const index = this.orderLines.findIndex(line => line.id === this.selectedLine);
+    if (this.isSelectedLine != null) {
+      const index = this.orderLines.findIndex(line => line.id === this.isSelectedLine);
       if (index > -1) {
         if (this.orderLines[index].quantity > 1) {
           this.orderLines[index].quantity -= 1;
         } else {
           // Remove the line if quantity is 0
           this.orderLines.splice(index, 1);
-          this.selectedLine = null; // Reset the selected line as it is removed
+          this.isSelectedLine = null; // Reset the selected line as it is removed
         }
       }
     }
     this.calculateTotalPrice()
   }
 
+  selectCustomer() {
+    this.selectedCustomer = this.selectedCustomer?? null;
+    this.currentOrder.customer_id = this.selectedCustomer.id;
+    this.currentOrder.pricelist_id = this.selectedCustomer.pricelist_id;
+    this.applyPricelist(this.selectedCustomer ? this.pricelists.find(pricelist => pricelist.id === this.selectedCustomer.pricelist_id) : null);
+  }
   applyPricelist(pricelist?: Pricelist) {
     // First, reset all prices to null
     this.products.forEach(product => {
@@ -276,7 +284,6 @@ export class SessionComponent implements OnInit {
     this.orderLines.forEach(line => {
       line.unit_price_after_discount = null;
     });
-
     // Then, apply new pricelist if provided
     if (pricelist) {
       this.selectedPricelist = pricelist;
@@ -313,6 +320,8 @@ export class SessionComponent implements OnInit {
       );
 
       if (appliedLine) {
+        //assign the product to the line
+        appliedLine.getProduct = this.products.find(product => product.id === appliedLine.product_id);
         if (appliedProgram.type === ProgramType.Coupon && appliedLine.status === CouponStatus.Active) {
           appliedLine.status = CouponStatus.Inactive;
           this.appliedProgramLines.push(appliedLine);
@@ -346,24 +355,31 @@ export class SessionComponent implements OnInit {
     this.currentOrder.lines = [...this.orderLines]
 
     const dialogRef = this.dialog.open(ReceiptComponent, {
-      width: '400px',
-      data: {order: this.currentOrder, pricelist: this.selectedPricelist ?? null, discounts: this.appliedProgramLines}
+      width: '450px',
+      data: {
+        order: this.currentOrder,
+        pricelist: this.selectedPricelist ?? null,
+        discounts: this.appliedProgramLines,
+      }
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      if (result) {
+      // if (result) {
         dummyOrdersLines.push(...this.orderLines);
         this.orders.push(this.currentOrder);
         this.orderLines = [];
-        this.selectedLine = null;
+        this.appliedProgramLines = [];
+        this.isSelectedLine = null;
+        this.selectedCustomer = null;
+        this.selectedPricelist = null;
+        this.products = deep_copy(dummyProducts);
         this.createOrder()
-      }
+      // }
     });
   }
   endSession() {
     this.currentSession.status = SessionStatus.Closed;
     this.currentSession.closed_at = new Date();
-    this.sessions.push(this.currentSession);
     this.pauseSession()
   }
   pauseSession() {
@@ -377,6 +393,43 @@ export class SessionComponent implements OnInit {
       dict[key] = value;
     }
   }
+  frontFilter(event?: PageEvent) {
+    const name = this.filterForm.value.name_substr
+    const category_id = this.filterForm.value.category_id
+    let data = [...dummyProducts]
+    if (name) {
+      data = data.filter((item) => item.name.toLowerCase().includes(name.toLowerCase()))
+    }
+    if (category_id !== 0) {
+      data = data.filter((item) => item.category_id === category_id)
+    }
+    if (event) {
+      this.products = data.slice(event.pageIndex * event.pageSize, event.pageIndex * event.pageSize + event.pageSize);
+    }
+    else {
+      this.products = data.slice(0, dummyProducts.length)
+    }
+  }
+  get nameControl() : FormControl  {
+    return this.filterForm.get('name_substr') as FormControl;
+  }
+  get categoryControl() {
+    return this.filterForm.get('category_id');
+  }
+  get isPayable() {
+    return this.orderLines.length > 0 && this.selectedCustomer !== null;
+  }
+  ngOnDestroy() {
+    this.valueChangedSubscription.unsubscribe();
+    //TODO: Unsubscribe from all subscriptions
+  }
+  getProgramType(line: Coupon | BuyXGetY) {
+    //check if it has the buy property
+    if ('buy' in line) {
+      return 'Buy X Get Y';
+    }
+    return 'Coupon';
 
+  }
 
 }

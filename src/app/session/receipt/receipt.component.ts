@@ -58,4 +58,12 @@ download() {
     pdf.save('receipt.pdf');
   });
 }
+  getDiscountType(line: Coupon | BuyXGetY) {
+    //check if it has the buy property
+    if ('buy' in line) {
+      return 'Buy X Get Y';
+    }
+    return 'Coupon';
+
+  }
 }

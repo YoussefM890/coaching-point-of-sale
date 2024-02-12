@@ -11,7 +11,7 @@ import {
   MatRowDef, MatTable
 } from "@angular/material/table";
 import {TranslateModule} from "@ngx-translate/core";
-import {getDisplayedColumns, mapMethods, TableColumn} from "../models/classes/tableColumn";
+import {mapMethods, TableColumn} from "../models/classes/tableColumn";
 import {customerColumns} from "../models/displayed-columns/customerColumns";
 import {dummyCustomers} from "../models/dummyData";
 import {Customer} from "../models/classes/customer";
@@ -28,6 +28,8 @@ import {OurTableComponent} from "../_reusable-components/our-table/our-table.com
 import {MatDialog} from "@angular/material/dialog";
 import {AddCustomerComponent} from "./add-customer/add-customer.component";
 import {MatButton} from "@angular/material/button";
+import {ImportComponent} from "../_reusable-components/import/import.component";
+import {customerPossibleFields} from "../models/possible-fields/ImportCustomersFields";
 
 @Component({
   selector: 'app-customers',
@@ -130,4 +132,17 @@ export class CustomersComponent implements OnInit {
   openDeleteCustomer(customer:Customer){
     console.log('delete', customer)
   }
+  openImportCustomers() {
+    let dialogRef = this.dialog.open(ImportComponent, {
+      width: '100vw',
+      height: '100vh',
+      maxWidth: '100vw',
+      maxHeight: '100vh',
+      data: {
+        possibleFields: customerPossibleFields,
+      }
+    });
+  }
+
+  protected readonly Customer = Customer;
 }

@@ -1,4 +1,4 @@
-import {ImportField} from "../classes/ImportField";
+import {ErrorWarning, ImportField} from "../classes/ImportField";
 import {createImportField} from "../functions";
 import {Validator} from "../enums/Validator";
 
@@ -6,17 +6,16 @@ export const fields : Partial<ImportField>[] = [
   {
     value:'number',
     viewValue:'Number',
-    validators: [Validator.Number, Validator.Required],
+    validators: [[Validator.Number,ErrorWarning.Warning],[Validator.Required,ErrorWarning.Error]], //TODO update the validator after removing the ErrorWarning enum
   },
   {
     value: 'name',
     viewValue: 'Name',
-    validators: [Validator.Required],
+    validators: [[Validator.Required,ErrorWarning.Error]],
   },
 ];
 
 export const employeePossibleFields : ImportField[] = fields.map(config => createImportField(config));
-
 
 export const validatorFunctions = {
   required: (value: any): boolean => {

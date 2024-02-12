@@ -16,7 +16,7 @@ const fields:Partial<TableColumn>[] = [
     value: 'edit',
     viewValue: 'Edit',
     type: TableColumnType.Icon,
-    icon: 'edit',
+    icon  : 'edit',
     onClickMethodName: "openEditCustomer",
     childClasses: [CssClass.EditIcon]
   },
@@ -24,7 +24,7 @@ const fields:Partial<TableColumn>[] = [
     value: 'delete',
     viewValue: 'Delete',
     type: TableColumnType.Icon,
-    icon: 'delete',
+    icon : 'delete',
     onClickMethodName: "openDeleteCustomer",
     childClasses: [CssClass.DeleteIcon]
   }

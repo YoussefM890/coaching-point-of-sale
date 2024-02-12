@@ -106,8 +106,8 @@ export class StockCategoriesComponent implements OnInit{
       height: '300px',
     }).afterClosed().subscribe(result => {
       if (result) {
-        this.datasource.push(result);
-        this.datasource = [...this.datasource]
+        this.baseData.push(result);
+        this.frontFilter();
       }
     });
   }

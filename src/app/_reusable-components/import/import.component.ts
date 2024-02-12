@@ -7,15 +7,14 @@ import {MatError, MatFormField, MatLabel} from "@angular/material/form-field";
 import {MatOption, MatSelect} from "@angular/material/select";
 import {MatProgressSpinner} from "@angular/material/progress-spinner";
 import {MatTooltip} from "@angular/material/tooltip";
-import {ImportField} from "../../models/classes/ImportField";
+import {ErrorWarning, ImportField} from "../../models/classes/ImportField";
 import {Papa} from 'ngx-papaparse';
 import {ImportEmployeesData} from "../../models/dialog-data-interfaces/importEmployeesData";
 import {MatIconModule} from "@angular/material/icon";
 import {TranslateModule} from "@ngx-translate/core";
 import {errorFunctions, validatorFunctions} from "../../models/possible-fields/ImportEmployeeFields";
 import {Validator} from "../../models/enums/Validator";
-import {keyObjectPair, mapArrayToKeyObjectPair} from "../../models/functions";
-import {log} from "node:util";
+import {calculateSimilarity, mapArrayToKeyObjectPair, transposeMatrix} from "../../models/functions";
 
 @Component({
   selector: 'app-import',
@@ -41,7 +40,7 @@ import {log} from "node:util";
 export class ImportComponent implements OnInit {
   file: File = null;
   loaded: boolean = true;
-  warning: string = null;
+  warning: string = '';
   errors: string = '';
   matchedValuesChanged: boolean = true;
   matchingForm: FormGroup;
@@ -99,7 +98,12 @@ export class ImportComponent implements OnInit {
 
   upload(force_upload: boolean = false) {
     this.validateData();
-    console.log(this.errors);
+    this.matchedValuesChanged = false;
+    if (this.errors === '') {
+      if (force_upload || this.warning === '') {
+        this.dialogRef.close();
+      }
+    }
   }
 
   exportWarning() {
@@ -130,37 +134,67 @@ export class ImportComponent implements OnInit {
   }
 
   private autoMatch() {
-    // const formValue = {...this.matchingForm.value};
-    // const edgesList = [];
-    // for (const csvField of this.csvFields) {
-    //   for (const possibleField of this.possibleFields) {
-    //     const similarity = stringSimilarity.compareTwoStrings(csvField.toLowerCase(), possibleField.viewValue.toLowerCase());
-    //     if (similarity > 0.5) {
-    //       edgesList.push([csvField, possibleField.value, similarity]);
-    //     }
-    //   }
-    // }
+    const formValue = {...this.matchingForm.value};
+    const edgesList = [];
+    for (const csvField of this.csvFields) {
+      for (const possibleField of this.possibleFields) {
+        const similarity = calculateSimilarity(csvField.toLowerCase(), possibleField.viewValue.toLowerCase());
+        // console.log(similarity, '('+csvField, possibleField.viewValue+')')
+        if (similarity > 0.4) {
+          edgesList.push([csvField, possibleField.value, similarity]);
+        }
+      }
+    }
+    edgesList.sort((a, b) => b[2] - a[2] );
+    const connectionsA: { [key: string]: string } = {};
+    const connectionsB: { [key: string]: string } = {};
+    for (const edge of edgesList) {
+      const [nodeA, nodeB, weight] = edge;
+      if (!connectionsA[nodeA] && !connectionsB[nodeB]) {
+        formValue[nodeA] = nodeB;
+        connectionsA[nodeA] = nodeB;
+        connectionsB[nodeB] = nodeA;
+      }
+    }
+
+    this.matchingForm.patchValue(formValue);
+    this.onMatchingFormValueChanged()
   }
 
   private validateData(): void {
     this.errors = '';
+    this.warning = '';
+    this.validateMatchingForm();
     const data = this.generateObject();
     const possibleFields  = mapArrayToKeyObjectPair(this.possibleFields, 'value')
     Object.entries(data).forEach(([possibleFieldValue, row]: [string, string[]]) => {
       const possibleField = possibleFields[possibleFieldValue]
-      possibleField.validators.forEach((validator: Validator) => {
+      possibleField.validators.forEach((validator :any) => {  //TODO: replace any with Validator after removing the ErrorWarning enum
         row.forEach((value, rowIndex) => {
-          const isValid = validatorFunctions[validator](value);
+          const isValid = validatorFunctions[validator[0]](value);
           if (!isValid) {
-            this.errors += `Row ${rowIndex + 1}: ${errorFunctions[validator](possibleField.viewValue)} \n`;
+            if (validator[1] === ErrorWarning.Error) {  //TODO : Same update this logic after removing the ErrorWarning enum
+              this.errors += `Row ${rowIndex + 1}: ${errorFunctions[validator[0]](possibleField.viewValue)} \n`;
+            } else {
+              this.warning += `Row ${rowIndex + 1}: ${errorFunctions[validator[0]](possibleField.viewValue)} \n`;
+            }
           }
         });
       });
     });
   }
 
+  private validateMatchingForm(): void {
+    const used_fields = Object.values(this.matchingForm.value).filter(o => o != null);
+    const required_fields = this.possibleFields.filter(field => field.validators.some(validator => validator[0] === Validator.Required));
+    required_fields.forEach(field => {
+      if (!used_fields.includes(field.value)) {
+        this.errors += `${field.viewValue} is required. \n`;
+      }
+    });
+  }
   private generateObject(): { [key: string]: string[] } {
-    const transposedRows = this.transposeMatrix(this.rows);
+    const transposedRows = transposeMatrix(this.rows);
     const generatedObject = {};
     Object.entries(this.matchingForm.value).forEach(([key, value]: [string, string]) => {
       if (value) {
@@ -168,17 +202,5 @@ export class ImportComponent implements OnInit {
       }
     });
     return generatedObject;
-  }
-
-  private transposeMatrix(matrix: any[][]): any[][] {
-    return matrix[0].map((_, colIndex) => matrix.map(row => row[colIndex]));
-  }
-
-  private mapPossibleFieldToCsvIndexes() {
-    Object.entries(this.matchingForm.value).forEach(([key, value]: [string, string]) => {
-      if (value) {
-        this.possibleFieldToCsvIndexMap[key] = this.csvFields.indexOf(value);
-      }
-    });
   }
 }

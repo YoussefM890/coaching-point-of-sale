@@ -1,12 +1,21 @@
 import {FormField} from "./classes/formField";
 import {TableColumn} from "./classes/tableColumn";
-import {dummyCategories, dummyProducts} from "./dummyData";
 import {ImportField} from "./classes/ImportField";
 export function createFormField<T extends FormField>(FormFieldType: new () => T, overrides: Partial<T> = {}): T {
   return { ...new FormFieldType(), ...overrides };
 }
 export function createTableColumn(overrides: Partial<TableColumn> = {}): TableColumn {
-  return { ...new TableColumn(), ...overrides };
+  const base = new TableColumn();
+  const combined = { ...base, ...overrides };
+
+  // Adjust getIcon to consider the combined instance's properties
+  if (typeof combined.getValue === 'undefined') {
+    combined.getValue = (arg?: any) => arg? arg[combined.value] : null;
+  }
+  if (typeof combined.getIcon === 'undefined') {
+    combined.getIcon = (arg?: any) => combined.icon ?? combined.getValue(arg) ?? '';
+  }
+  return combined;
 }
 export function createImportField<T extends ImportField = ImportField>(
   overrides: Partial<T> = {},
@@ -53,6 +62,16 @@ export function mapArrayToKeyObjectPair<T extends object, K extends keyof T>(
   });
   return result;
 }
+export function transposeMatrix(matrix: any[][]): any[][] {
+  return matrix[0].map((_, colIndex) => matrix.map(row => row[colIndex]));
+}
+
+export function calculateSimilarity(s1, s2) {
+  const distance = levenshteinDistanceOptimized(s1, s2);
+  const longestLength = Math.max(s1.length, s2.length);
+  return longestLength === 0 ? 1 : (longestLength - distance) / longestLength;
+}
+
 export function linkLists<T extends Record<string, any>, U extends Record<string, any>>(
   listToUpdate: T[],
   referenceList: U[],
@@ -89,7 +108,25 @@ export function linkAndAggregate<T extends Record<string, any>, U extends Record
     return { ...itemX, [targetPropertyX]: aggregatedItems };
   });
 }
+function levenshteinDistanceOptimized(s1, s2) {
+  if (s1.length < s2.length) [s1, s2] = [s2, s1];
 
+  let previousRow = Array(s2.length + 1).fill(0).map((_, i) => i);
+  let currentRow = [];
+
+  for (let i = 1; i <= s1.length; i++) {
+    currentRow = [i];
+    for (let j = 1; j <= s2.length; j++) {
+      const insert = currentRow[j - 1] + 1;
+      const remove = previousRow[j] + 1;
+      const replace = s1[i - 1] === s2[j - 1] ? previousRow[j - 1] : previousRow[j - 1] + 1;
+      currentRow.push(Math.min(insert, remove, replace));
+    }
+    [previousRow, currentRow] = [currentRow, previousRow];
+  }
+
+  return previousRow[s2.length];
+}
 
 
 

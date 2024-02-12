@@ -7,7 +7,6 @@ import {customerFormErrors, customerValidationMessages} from "../../models/form-
 import {MatButton} from "@angular/material/button";
 import {MatToolbar} from "@angular/material/toolbar";
 import {TranslateModule} from "@ngx-translate/core";
-import {employeeFormErrors} from "../../models/form-validation/employeeFormValidation";
 import {MatError, MatFormField, MatLabel} from "@angular/material/form-field";
 import {MatInput} from "@angular/material/input";
 import {genders} from "../../models/enums/gender";
@@ -17,7 +16,6 @@ import {MatIcon} from "@angular/material/icon";
 import {MatTooltip} from "@angular/material/tooltip";
 import {dummyCustomers, dummyPricelists} from "../../models/dummyData";
 import {Pricelist} from "../../models/classes/pricelist";
-import {Customer} from "../../models/classes/customer";
 
 @Component({
   selector: 'app-add-customer',
@@ -73,7 +71,7 @@ export class AddCustomerComponent implements OnInit, OnDestroy{
   }
 
   addCustomer() {
-    const value : any = [...this.form.value];
+    const value : any = {...this.form.value};
     value.id = dummyCustomers.length + 1;
     this.dialogRef.close(value);
   }

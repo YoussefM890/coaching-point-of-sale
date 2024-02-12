@@ -1,6 +1,7 @@
 export const employeeFormErrors = {
   number: '',
   first_name: '',
+  email: '',
   last_name: '',
   gender: '',
   phone: '',
@@ -17,6 +18,9 @@ export const employeeValidationMessages = {
   },
   first_name: {
     required: 'First name is required.',
+  },
+  email: {
+    required: 'Email is required.',
   },
   last_name: {
     required: 'Last name is required.',

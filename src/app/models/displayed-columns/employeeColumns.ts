@@ -28,17 +28,17 @@ const fields:Partial<TableColumn>[] = [
     value: 'edit',
     viewValue: 'Edit',
     type: TableColumnType.Icon,
-    icon: 'edit',
     onClickMethodName: "openEditEmployee",
-    childClasses: [CssClass.EditIcon]
+    childClasses: [CssClass.EditIcon],
+    icon  : 'edit',
   },
   {
-    value: 'delete',
-    viewValue: 'Delete',
+    getValue: (arg) => arg ? 'Active' : 'Inactive',
+    value: 'is_active',
+    viewValue: 'Status',
     type: TableColumnType.Icon,
-    icon: 'delete',
-    onClickMethodName: "openDeleteEmployee",
-    childClasses: [CssClass.DeleteIcon]
+    childClasses: [CssClass.DeleteIcon],
+    getIcon: (arg) => arg.is_active ? 'check' : 'close'
   }
 ];
 export const employeeColumns : TableColumn[] = fields.map(config => createTableColumn(config));

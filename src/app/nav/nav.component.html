@@ -1,66 +1,70 @@
 <mat-sidenav-container class="sidenav-container">
-    <mat-sidenav
-        #drawer
-        class="sidenav"
-        [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"
-        [mode]="(isHandset$ | async) ? 'over' : 'side'"
-        [opened]="(isHandset$ | async) === false && isAuthenticated()"
-    >
-        <mat-nav-list>
-            @if (isAdmin()){
-            <a mat-list-item routerLink="customers">
-              <mat-icon>people</mat-icon>
-              {{ 'Customers' | translate }}
-            </a>
-            <a mat-list-item routerLink="employees">
-              <mat-icon>account_circle</mat-icon>
-              {{ 'Employees' | translate }}
-            </a>
-            <a mat-list-item routerLink="stock">
-              <mat-icon>inventory</mat-icon>
-              {{'Stock' | translate}}
-            </a>
-            <a mat-list-item routerLink="orders">
-              <mat-icon>shopping_cart</mat-icon>
-              {{'Orders' | translate}}
-            </a>
-            <a mat-list-item routerLink="sessions">
-              <mat-icon>access_time</mat-icon>
-              {{'Sessions' | translate}}
-            </a>
-            <a mat-list-item routerLink="loyalty">
-              <mat-icon>card_giftcard</mat-icon>
-              {{'Discount & Loyalty' | translate}}
-            </a>
-            }
-        </mat-nav-list>
-    </mat-sidenav>
-    <mat-sidenav-content>
-        <mat-toolbar color="primary" class="expanded-toolbar">
-            @if (isAuthenticated()) {
-            <button
-              type="button"
-              aria-label="Toggle sidenav"
-              mat-icon-button
-              (click)="drawer.toggle()"
-            >
-              <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
-            </button>
-            }
-            <div>
-                @if (isAuthenticated()) {
-                <button mat-button (click)="logout()">
-                  <mat-icon>exit_to_app</mat-icon>
-                  {{'Logout' | translate}}
-                </button>
-                } @else {
-                <button mat-button routerLink="/login">
-                  <mat-icon>power_settings_new</mat-icon>
-                  {{'Login' | translate}}
-                </button>
-                }
-            </div>
-        </mat-toolbar>
-        <router-outlet></router-outlet>
-    </mat-sidenav-content>
+  <mat-sidenav
+    #drawer
+    class="sidenav"
+    [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"
+    [mode]="(isHandset$ | async) ? 'over' : 'side'"
+    [opened]="(isHandset$ | async) === false && isAuthenticated()"
+  >
+    <mat-nav-list>
+      @if (isAdmin()) {
+        <a mat-list-item routerLink="dashboard">
+          <mat-icon>dashboard</mat-icon>
+          {{ 'Dashboard' | translate }}
+        </a>
+        <a mat-list-item routerLink="customers">
+          <mat-icon>people</mat-icon>
+          {{ 'Customers' | translate }}
+        </a>
+        <a mat-list-item routerLink="employees">
+          <mat-icon>account_circle</mat-icon>
+          {{ 'Employees' | translate }}
+        </a>
+        <a mat-list-item routerLink="stock">
+          <mat-icon>inventory</mat-icon>
+          {{ 'Stock' | translate }}
+        </a>
+        <a mat-list-item routerLink="orders">
+          <mat-icon>shopping_cart</mat-icon>
+          {{ 'Orders' | translate }}
+        </a>
+        <a mat-list-item routerLink="sessions">
+          <mat-icon>access_time</mat-icon>
+          {{ 'Sessions' | translate }}
+        </a>
+        <a mat-list-item routerLink="loyalty">
+          <mat-icon>card_giftcard</mat-icon>
+          {{ 'Discount & Loyalty' | translate }}
+        </a>
+      }
+    </mat-nav-list>
+  </mat-sidenav>
+  <mat-sidenav-content>
+    <mat-toolbar color="primary" class="expanded-toolbar">
+      @if (isAuthenticated()) {
+        <button
+          type="button"
+          aria-label="Toggle sidenav"
+          mat-icon-button
+          (click)="drawer.toggle()"
+        >
+          <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
+        </button>
+      }
+      <div>
+        @if (isAuthenticated()) {
+          <button mat-button (click)="logout()">
+            <mat-icon>exit_to_app</mat-icon>
+            {{ 'Logout' | translate }}
+          </button>
+        } @else {
+          <button mat-button routerLink="/login">
+            <mat-icon>power_settings_new</mat-icon>
+            {{ 'Login' | translate }}
+          </button>
+        }
+      </div>
+    </mat-toolbar>
+    <router-outlet></router-outlet>
+  </mat-sidenav-content>
 </mat-sidenav-container>
